@@ -1,0 +1,63 @@
+version: '3'
+
+services:
+  webserver:
+    image: 'nginx:latest'
+    working_dir: /symfogram
+    volumes:
+      - '.:/symfogram'
+      - './phpdocker/nginx/nginx.conf:/etc/nginx/conf.d/default.conf'
+    ports:
+      - '80:80'
+    depends_on:
+      - database
+    networks:
+      - sail
+
+  php-fpm:
+    build: phpdocker/php-fpm
+    working_dir: /symfogram
+    volumes:
+      - '.:/application'
+      - './phpdocker/php-fpm/php-ini-overrides.ini:/usr/local/etc/php/conf.d/99-overrides.ini'
+      - './phpdocker/php-fpm/xdebug.ini:/usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini'
+    environment:
+      - PHP_IDE_CONFIG=serverName=symfogram
+    networks:
+      - sail
+
+  ###> doctrine/doctrine-bundle ###
+  database:
+    image: postgres:${POSTGRES_VERSION:-14}-alpine
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-symfogram}
+      # You should definitely change the password in production
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-root}
+      POSTGRES_USER: ${POSTGRES_USER:-user}
+    volumes:
+      - db-data:/var/lib/postgresql/data:rw
+    networks:
+      - sail
+
+  redis:
+    image: "redis:alpine"
+    command: redis-server --requirepass root
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/var/lib/redis
+      - redis.conf:/usr/local/etc/redis/redis.conf
+    environment:
+      - REDIS_REPLICATION_MODE=master
+    networks:
+      - sail
+
+
+networks:
+  sail:
+    driver: bridge
+volumes:
+  db-data:
+  redis-data:
+  redis.conf:
+
