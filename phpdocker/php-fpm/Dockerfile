@@ -7,5 +7,10 @@ RUN apt-get update; \
     apt-get clean; \
     rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* /usr/share/doc/*
 
-RUN  pecl install xdebug \
-     && docker-php-ext-enable xdebug \
+RUN apt-get update && \
+    apt-get install -y libpq-dev && \
+    docker-php-ext-install pdo pdo_pgsql pgsql
+
+#RUN  docker-php-ext-install xdebug \
+#     && docker-php-ext-enable xdebug \
+
