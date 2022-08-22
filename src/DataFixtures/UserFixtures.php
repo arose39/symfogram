@@ -29,10 +29,14 @@ class UserFixtures extends Fixture
             $user->setType($this->faker->numberBetween(1, 3));
             //some users might be without nickname
             if (rand(0, 1)) {
-                $user->setNickname($this->faker->unique()->word . $this->faker->numberBetween(1, 9000));
+                $user->setNickname($this->faker->unique()->word . $this->faker->optional(0.5)->numberBetween(1, 9000));
             }
+            $user->setIsVerified(true);
+            $user->setRoles(['ROLE_USER']);
+            $user->setAbout($this->faker->realText($this->faker->numberBetween(50, 100)));
             $password = $this->hasher->hashPassword($user, '123123123');
             $user->setPassword($password);
+            $user->setPicture('default_img.jpeg');
             $user->setCreatedAt(new \DateTimeImmutable('now'));
             $user->setUpdatedAt(new \DateTimeImmutable('now'));
             $manager->persist($user);
