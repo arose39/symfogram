@@ -3,21 +3,13 @@
 {% block title %}Hello ProfileController!{% endblock %}
 
 {% block body %}
-    <h1>Hello {{ user.firstName }} {{ user.lastName }}! ✅</h1>
+    <h1>{{ user.firstName }} {{ user.lastName }}! ✅</h1>
+    <p>{{ user.about }}</p>
 
-    <a href="/logout"><h1>logout</h1> </a>
-<style>
-    .example-wrapper { margin: 1em auto; max-width: 800px; width: 95%; font: 18px/1.5 sans-serif; }
-    .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
-</style>
+    <p>{{ dump(userSubscriptions) }}</p>
+    <p>{{ dump(userFollowers) }}</p>
 
-<div class="example-wrapper">
-    <h1>Hello {{ controller_name }}! ✅</h1>
+    <a href="{{ path('subscribe', {user:user.id}) }}">Подписаться</a>
+    <a href="{{ path('unsubscribe', {user:user.id}) }}">Отписаться</a>
 
-    This friendly message is coming from:
-    <ul>
-        <li>Your controller at <code><a href="{{ 'C:/OpenServer/domains/symfogram/src/Controller/ProfileController.php'|file_link(0) }}">src/Controller/ProfileController.php</a></code></li>
-        <li>Your template at <code><a href="{{ 'C:/OpenServer/domains/symfogram/templates/profile/index.html.twig'|file_link(0) }}">templates/profile/index.html.twig</a></code></li>
-    </ul>
-</div>
 {% endblock %}
