@@ -3,12 +3,16 @@
 namespace App\Controller;
 
 use App\Entity\User;
+use App\Form\UserType;
+use App\Service\AvatarPictureUploader;
 use App\Service\Subscription;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-
+use Symfony\Component\HttpFoundation\File\UploadedFile;
+use Symfony\Component\HttpFoundation\Request;
 
 class ProfileController extends AbstractController
 {
@@ -16,44 +20,74 @@ class ProfileController extends AbstractController
     public function view(int|string $nickname, ManagerRegistry $doctrine, Subscription $subscription): Response
     {
         $user = $doctrine->getRepository(User::class)->findOneByNickname($nickname);
-        $userSubscriptions = $subscription->getUserSubscriptions($user);
-        $userFollowers = $subscription->getUserFollowers($user);
+        $userSubscriptionsIds = $subscription->getUserSubscriptionsIds($user);
+        $userFollowersIds = $subscription->getUserFollowersIds($user);
+        $userSubscriptions = $doctrine->getRepository(User::class)->findBy(['id' => $userSubscriptionsIds]);
+        $userFollowers = $doctrine->getRepository(User::class)->findBy(['id' => $userFollowersIds]);
+
+        $numberUserFollowers = $subscription->countUserFollowers($user);
+        $numberUserSubscriptions = $subscription->countUserSubscriptions($user);
+        $mutualSubscriptionsIds = $subscription->getMutualSubscriptionsIds($user);
+        $mutualSubscriptions = $doctrine->getRepository(User::class)->findBy(['id' => $mutualSubscriptionsIds]);
 
         return $this->render('profile/view.html.twig', [
             'controller_name' => 'ProfileController',
             'user' => $user,
             'userSubscriptions' => $userSubscriptions,
             'userFollowers' => $userFollowers,
+            'numberUserFollowers' => $numberUserFollowers,
+            'numberUserSubscriptions' => $numberUserSubscriptions,
+            'mutualSubscriptions' => $mutualSubscriptions
+
         ]);
     }
 
-//    #[Route('/profile/1/edit', name: 'edit_profile')]
-//    public function edit(): Response
-//    {
-//        return $this->render('profile/edit.html.twig', [
-//            'controller_name' => 'ProfileController',
-//        ]);
-//    }
+    #[Route('/profile/{user}/edit', name: 'edit_profile')]
+    public function edit(User $user, Request $request, EntityManagerInterface $entityManager, AvatarPictureUploader $avatarUploader): Response
+    {
+        $form = $this->createForm(UserType::class, $user);
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+            /** @var UploadedFile $pictureFile */
+            $pictureFile = $form->get('picture')->getData();
+            if ($pictureFile) {
+                $pictureFileName = $avatarUploader->upload($pictureFile);
+                // Remove previous picture from storage
+                if ($user->getPicture()){
+                    $avatarUploader->delete($user->getPicture());
+                }
+                $user->setPicture($pictureFileName);
+            }
+            $entityManager->persist($user);
+            $entityManager->flush();
+
+            return $this->redirectToRoute('profile', [
+                'nickname'=>$user->getNickname()
+            ]);
+        }
+
+        return $this->render('profile/edit.html.twig', [
+            'form' => $form->createView(),
+        ]);
+    }
 
     #[Route('/profile/subscribe/{user}', name: 'subscribe')]
-    public function subscribe(User $user , Subscription $subscription): Response
+    public function subscribe(User $user, Subscription $subscription): Response
     {
-        $subscription->followUser($this->getUser(), $user);
+        $subscription->followUser($user);
 
         return $this->redirectToRoute('profile', [
-           'nickname'=> $user->getNickname()
+            'nickname' => $user->getNickname()
         ]);
     }
 
-
-
     #[Route('/profile/unsubscribe/{user}', name: 'unsubscribe')]
-    public function unsubscribe(User $user , Subscription $subscription): Response
+    public function unsubscribe(User $user, Subscription $subscription): Response
     {
-        $subscription->unfollowUser($this->getUser(), $user);
+        $subscription->unfollowUser($user);
 
         return $this->redirectToRoute('profile', [
-            'nickname'=> $user->getNickname()
+            'nickname' => $user->getNickname()
         ]);
     }
 }

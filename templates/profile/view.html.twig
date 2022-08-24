@@ -3,13 +3,102 @@
 {% block title %}Hello ProfileController!{% endblock %}
 
 {% block body %}
+
+    <img src="{{ asset('uploads/avatar_pictures/' ~ user.picture) }}" alt="avatar picture" height="300" >
     <h1>{{ user.firstName }} {{ user.lastName }}! ✅</h1>
     <p>{{ user.about }}</p>
+    <a href="{{ path('edit_profile', {user:user.id}) }}">
+        <button type="button" class="btn btn-primary">
+            Edit profile
+        </button>
+    </a>
+    <hr>
+    <a href="{{ path('subscribe', {user:user.id}) }}">
+        <button type="button" class="btn btn-primary">
+            Подписаться
+        </button>
+    </a>
+    <a href="{{ path('unsubscribe', {user:user.id}) }}">
+        <button type="button" class="btn btn-primary">
+            Отписаться
+        </button>
+    </a>
+    <hr>
+    <p>Friends, who a also following {{ user.firstName }} {{ user.lastName }}</p>
+    <ul>
+        {% for subscription in mutualSubscriptions %}
+            <li><a href="{{ path('profile', {nickname:subscription.nickname}) }}">
+                    {{subscription.firstName }}
+                    {{subscription.lastName }}
+                </a>
+            </li>
+        {% endfor %}
+    </ul>
 
-    <p>{{ dump(userSubscriptions) }}</p>
-    <p>{{ dump(userFollowers) }}</p>
+    <hr>
 
-    <a href="{{ path('subscribe', {user:user.id}) }}">Подписаться</a>
-    <a href="{{ path('unsubscribe', {user:user.id}) }}">Отписаться</a>
+    <!-- Button trigger modal -->
+    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#subscription">
+        Subscriptions: {{ numberUserSubscriptions }}
+    </button>
+
+    <!-- Modal -->
+    <div class="modal fade" id="subscription" tabindex="-1" role="dialog" aria-labelledby="subscriptionTitle" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLongTitle">Subscriptions</h5>
+                </div>
+                <div class="modal-body">
+                    <ul>
+                    {% for subscription in userSubscriptions %}
+                        <li><a href="{{ path('profile', {nickname:subscription.nickname}) }}">
+                            {{subscription.firstName }}
+                            {{subscription.lastName }}
+                            </a>
+                        </li>
+                    {% endfor %}
+                    </ul>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Button trigger modal -->
+    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#followers">
+        Followers: {{ numberUserFollowers }}
+    </button>
+
+    <!-- Modal -->
+    <div class="modal fade" id="followers" tabindex="-1" role="dialog" aria-labelledby="followersTitle" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLongTitle">Followers</h5>
+                </div>
+                <div class="modal-body">
+                    <h1>sdasdas</h1>
+                    <ul>
+                        {% for follower in userFollowers %}
+                            <li><a href="{{ path('profile', {nickname:follower.nickname}) }}">
+                                    {{follower.firstName }}
+                                    {{follower.lastName }}
+                                </a>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
 
 {% endblock %}
