@@ -7,26 +7,38 @@
 
     <table class="table">
         <tbody>
-            <tr>
-                <th>Id</th>
-                <td>{{ post.id }}</td>
-            </tr>
-            <tr>
-                <th>Filename</th>
-                <td>{{ post.filename }}</td>
-            </tr>
-            <tr>
-                <th>Description</th>
-                <td>{{ post.description }}</td>
-            </tr>
-            <tr>
-                <th>Created_at</th>
-                <td>{{ post.createdAt ? post.createdAt|date('Y-m-d H:i:s') : '' }}</td>
-            </tr>
-            <tr>
-                <th>Updated_at</th>
-                <td>{{ post.updatedAt ? post.updatedAt|date('Y-m-d H:i:s') : '' }}</td>
-            </tr>
+        <tr>
+            <th>Id</th>
+            <td>{{ post.id }}</td>
+        </tr>
+        <tr>
+            <th>Filename</th>
+            <td><img src="{{ asset('uploads/post_pictures/' ~ post.filename) }}" alt="post picture" height="300"></td>
+        </tr>
+        <tr>
+            <th>Description</th>
+            <td>{{ post.description }}</td>
+        </tr>
+        <tr>
+            <th>Created_at</th>
+            <td>{{ post.createdAt ? post.createdAt|date('Y-m-d H:i:s') : '' }}</td>
+        </tr>
+        <tr>
+            <th>Updated_at</th>
+            <td>{{ post.updatedAt ? post.updatedAt|date('Y-m-d H:i:s') : '' }}</td>
+        </tr>
+        <tr>
+            <th>Likes quantity</th>
+            <td> {{ likesQuantity }}</td>
+        </tr>
+        <tr>
+            <th>Like</th>
+            <td><a href="{{ path('app_post_like', {id:post.id}) }}" class="btn btn-primary ">
+                Like
+            </a><a href="{{ path('app_post_unlike', {id:post.id}) }}" class="btn btn-primary ">
+                    Unlike
+                </a></td>
+        </tr>
         </tbody>
     </table>
 

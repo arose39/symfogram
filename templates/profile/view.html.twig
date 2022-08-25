@@ -5,41 +5,47 @@
 {% block body %}
 
     {% if(user.picture) %}
-    <img src="{{ asset('uploads/avatar_pictures/' ~ user.picture) }}" alt="avatar picture" height="300" >
+        <img src="{{ asset('uploads/avatar_pictures/' ~ user.picture) }}" alt="avatar picture" height="300">
     {% else %}
-        <img src="{{ asset('images/default_avatar.png') }}" alt="avatar picture" height="300" >
+        <img src="{{ asset('images/default_avatar.png') }}" alt="avatar picture" height="300">
     {% endif %}
     <h1>{{ user.firstName }} {{ user.lastName }}! ✅</h1>
     <p>{{ user.about }}</p>
 
     {% if(currentUser is same as (user)) %}
-    <a href="{{ path('edit_profile', {user:user.id}) }}">
-        <button type="button" class="btn btn-primary">
-            Edit profile
-        </button>
-    </a>
+        <a href="{{ path('edit_profile', {user:user.id}) }}">
+            <button type="button" class="btn btn-primary">
+                Edit profile
+            </button>
+        </a>
+
+        <a href="{{ path('app_post_new') }}">
+            <button type="button" class="btn btn-primary">
+                New post
+            </button>
+        </a>
     {% endif %}
 
     <hr>
     {% if(currentUser is not same as (user)) %}
-    <a href="{{ path('subscribe', {user:user.id}) }}">
-        <button type="button" class="btn btn-primary">
-            Подписаться
-        </button>
-    </a>
-    <a href="{{ path('unsubscribe', {user:user.id}) }}">
-        <button type="button" class="btn btn-primary">
-            Отписаться
-        </button>
-    </a>
+        <a href="{{ path('subscribe', {user:user.id}) }}">
+            <button type="button" class="btn btn-primary">
+                Подписаться
+            </button>
+        </a>
+        <a href="{{ path('unsubscribe', {user:user.id}) }}">
+            <button type="button" class="btn btn-primary">
+                Отписаться
+            </button>
+        </a>
     {% endif %}
     <hr>
     <p>Friends, who a also following {{ user.firstName }} {{ user.lastName }}</p>
     <ul>
         {% for subscription in mutualSubscriptions %}
             <li><a href="{{ path('profile', {nickname:subscription.nickname}) }}">
-                    {{subscription.firstName }}
-                    {{subscription.lastName }}
+                    {{ subscription.firstName }}
+                    {{ subscription.lastName }}
                 </a>
             </li>
         {% endfor %}
@@ -53,7 +59,8 @@
     </button>
 
     <!-- Modal -->
-    <div class="modal fade" id="subscription" tabindex="-1" role="dialog" aria-labelledby="subscriptionTitle" aria-hidden="true">
+    <div class="modal fade" id="subscription" tabindex="-1" role="dialog" aria-labelledby="subscriptionTitle"
+         aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
@@ -61,13 +68,13 @@
                 </div>
                 <div class="modal-body">
                     <ul>
-                    {% for subscription in userSubscriptions %}
-                        <li><a href="{{ path('profile', {nickname:subscription.nickname}) }}">
-                            {{subscription.firstName }}
-                            {{subscription.lastName }}
-                            </a>
-                        </li>
-                    {% endfor %}
+                        {% for subscription in userSubscriptions %}
+                            <li><a href="{{ path('profile', {nickname:subscription.nickname}) }}">
+                                    {{ subscription.firstName }}
+                                    {{ subscription.lastName }}
+                                </a>
+                            </li>
+                        {% endfor %}
                     </ul>
                 </div>
                 <div class="modal-footer">
@@ -84,7 +91,8 @@
     </button>
 
     <!-- Modal -->
-    <div class="modal fade" id="followers" tabindex="-1" role="dialog" aria-labelledby="followersTitle" aria-hidden="true">
+    <div class="modal fade" id="followers" tabindex="-1" role="dialog" aria-labelledby="followersTitle"
+         aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
@@ -95,8 +103,8 @@
                     <ul>
                         {% for follower in userFollowers %}
                             <li><a href="{{ path('profile', {nickname:follower.nickname}) }}">
-                                    {{follower.firstName }}
-                                    {{follower.lastName }}
+                                    {{ follower.firstName }}
+                                    {{ follower.lastName }}
                                 </a>
                             </li>
                         {% endfor %}
