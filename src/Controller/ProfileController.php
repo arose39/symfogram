@@ -4,7 +4,7 @@ namespace App\Controller;
 
 use App\Entity\User;
 use App\Form\UserType;
-use App\Service\AvatarPictureUploader;
+use App\Service\Uploaders\AvatarPictureUploader;
 use App\Service\Subscription;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
@@ -19,6 +19,11 @@ class ProfileController extends AbstractController
     #[Route('/profile/{nickname}', name: 'profile')]
     public function view(int|string $nickname, ManagerRegistry $doctrine, Subscription $subscription): Response
     {
+        $currentUser = $this->getUser();
+        if(!$currentUser){
+                return $this->redirectToRoute('app_login');
+        }
+
         $user = $doctrine->getRepository(User::class)->findOneByNickname($nickname);
         $userSubscriptionsIds = $subscription->getUserSubscriptionsIds($user);
         $userFollowersIds = $subscription->getUserFollowersIds($user);
@@ -37,14 +42,20 @@ class ProfileController extends AbstractController
             'userFollowers' => $userFollowers,
             'numberUserFollowers' => $numberUserFollowers,
             'numberUserSubscriptions' => $numberUserSubscriptions,
-            'mutualSubscriptions' => $mutualSubscriptions
-
+            'mutualSubscriptions' => $mutualSubscriptions,
+            'currentUser' => $currentUser,
         ]);
     }
 
     #[Route('/profile/{user}/edit', name: 'edit_profile')]
     public function edit(User $user, Request $request, EntityManagerInterface $entityManager, AvatarPictureUploader $avatarUploader): Response
     {
+        if ($this->getUser() !== $user) {
+            return $this->redirectToRoute('profile', [
+                'nickname' => $user->getNickname()
+            ]);
+        }
+
         $form = $this->createForm(UserType::class, $user);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
@@ -53,7 +64,7 @@ class ProfileController extends AbstractController
             if ($pictureFile) {
                 $pictureFileName = $avatarUploader->upload($pictureFile);
                 // Remove previous picture from storage
-                if ($user->getPicture()){
+                if ($user->getPicture()) {
                     $avatarUploader->delete($user->getPicture());
                 }
                 $user->setPicture($pictureFileName);
@@ -62,7 +73,7 @@ class ProfileController extends AbstractController
             $entityManager->flush();
 
             return $this->redirectToRoute('profile', [
-                'nickname'=>$user->getNickname()
+                'nickname' => $user->getNickname()
             ]);
         }
 
@@ -74,6 +85,12 @@ class ProfileController extends AbstractController
     #[Route('/profile/subscribe/{user}', name: 'subscribe')]
     public function subscribe(User $user, Subscription $subscription): Response
     {
+        if ($this->getUser() === $user) {
+            return $this->redirectToRoute('profile', [
+                'nickname' => $user->getNickname()
+            ]);
+        }
+
         $subscription->followUser($user);
 
         return $this->redirectToRoute('profile', [
@@ -84,6 +101,11 @@ class ProfileController extends AbstractController
     #[Route('/profile/unsubscribe/{user}', name: 'unsubscribe')]
     public function unsubscribe(User $user, Subscription $subscription): Response
     {
+        if ($this->getUser() === $user) {
+            return $this->redirectToRoute('profile', [
+                'nickname' => $user->getNickname()
+            ]);
+        }
         $subscription->unfollowUser($user);
 
         return $this->redirectToRoute('profile', [

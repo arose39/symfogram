@@ -29,6 +29,6 @@ services:
         arguments:
             - { url: '%env(REDIS_URL)%' }
 
-    App\Service\AvatarPictureUploader:
+    App\Service\Uploaders\AvatarPictureUploader:
         arguments:
             $targetDirectory: '%avatar_pictures_directory%'

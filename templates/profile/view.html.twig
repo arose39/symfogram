@@ -4,15 +4,24 @@
 
 {% block body %}
 
+    {% if(user.picture) %}
     <img src="{{ asset('uploads/avatar_pictures/' ~ user.picture) }}" alt="avatar picture" height="300" >
+    {% else %}
+        <img src="{{ asset('images/default_avatar.png') }}" alt="avatar picture" height="300" >
+    {% endif %}
     <h1>{{ user.firstName }} {{ user.lastName }}! ✅</h1>
     <p>{{ user.about }}</p>
+
+    {% if(currentUser is same as (user)) %}
     <a href="{{ path('edit_profile', {user:user.id}) }}">
         <button type="button" class="btn btn-primary">
             Edit profile
         </button>
     </a>
+    {% endif %}
+
     <hr>
+    {% if(currentUser is not same as (user)) %}
     <a href="{{ path('subscribe', {user:user.id}) }}">
         <button type="button" class="btn btn-primary">
             Подписаться
@@ -23,6 +32,7 @@
             Отписаться
         </button>
     </a>
+    {% endif %}
     <hr>
     <p>Friends, who a also following {{ user.firstName }} {{ user.lastName }}</p>
     <ul>
