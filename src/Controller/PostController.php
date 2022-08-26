@@ -3,12 +3,16 @@
 namespace App\Controller;
 
 use App\Entity\Post;
+use App\Events\Events;
+use App\Events\PostCreatedEvent;
 use App\Form\PostType;
 use App\Repository\PostRepository;
 use App\Service\ImageOptimizer;
 use App\Service\Like;
+use App\Service\Subscription;
 use App\Service\Uploaders\PostPictureUploader;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -28,7 +32,7 @@ class PostController extends AbstractController
     }
 
     #[Route('/new', name: 'app_post_new', methods: ['GET', 'POST'])]
-    public function new(Request $request, PostRepository $postRepository, PostPictureUploader $postPictureUploader, ImageOptimizer $imageOptimizer): Response
+    public function new(Request $request, PostRepository $postRepository, PostPictureUploader $postPictureUploader, ImageOptimizer $imageOptimizer, EventDispatcherInterface $eventDispatcher, Subscription $subscription): Response
     {
         $post = new Post();
         $form = $this->createForm(PostType::class, $post);
@@ -44,9 +48,11 @@ class PostController extends AbstractController
                 $post->setCreatedAt(new \DateTimeImmutable('now'));
                 $post->setUpdatedAt(new \DateTimeImmutable('now'));
             }
-
-
             $postRepository->add($post, true);
+
+
+            $postCreatedEvent = new PostCreatedEvent($this->getUser(), $post, $subscription->getUserFollowersIds($this->getUser()));
+            $eventDispatcher->dispatch($postCreatedEvent, Events::POST_CREATED);
 
             return $this->redirectToRoute('app_post_index', [], Response::HTTP_SEE_OTHER);
         }

@@ -44,3 +44,12 @@ services:
         arguments:
             $maxWidth: '%app.picture_max_width%'
             $maxHeight: '%app.picture_max_height%'
+
+    App\Listeners\PostCreatedListener:
+        tags:
+            - { name: kernel.event_listener, event: post.created}
+
+    App\Service\Subscription:
+        arguments:
+            $redis: '@Predis\Client'
+            $security: '@Symfony\Component\Security\Core\Security'
