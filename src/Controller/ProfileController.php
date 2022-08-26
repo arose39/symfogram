@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\User;
 use App\Form\UserType;
+use App\Service\ImageOptimizer;
 use App\Service\Uploaders\AvatarPictureUploader;
 use App\Service\Subscription;
 use Doctrine\ORM\EntityManagerInterface;
@@ -16,12 +17,26 @@ use Symfony\Component\HttpFoundation\Request;
 
 class ProfileController extends AbstractController
 {
+    #[Route('/profile', name: 'my_profile')]
+    public function myProfile(): Response
+    {
+        $currentUser = $this->getUser();
+        if (!$currentUser) {
+            return $this->redirectToRoute('app_login');
+        }
+
+        return $this->redirectToRoute('profile', [
+            'nickname' => $currentUser->getNickname()
+        ]);
+    }
+
+
     #[Route('/profile/{nickname}', name: 'profile')]
     public function view(int|string $nickname, ManagerRegistry $doctrine, Subscription $subscription): Response
     {
         $currentUser = $this->getUser();
-        if(!$currentUser){
-                return $this->redirectToRoute('app_login');
+        if (!$currentUser) {
+            return $this->redirectToRoute('app_login');
         }
 
         $user = $doctrine->getRepository(User::class)->findOneByNickname($nickname);
@@ -48,7 +63,7 @@ class ProfileController extends AbstractController
     }
 
     #[Route('/profile/{user}/edit', name: 'edit_profile')]
-    public function edit(User $user, Request $request, EntityManagerInterface $entityManager, AvatarPictureUploader $avatarUploader): Response
+    public function edit(User $user, Request $request, EntityManagerInterface $entityManager, AvatarPictureUploader $avatarUploader, ImageOptimizer $imageOptimizer): Response
     {
         if ($this->getUser() !== $user) {
             return $this->redirectToRoute('profile', [
@@ -63,6 +78,7 @@ class ProfileController extends AbstractController
             $pictureFile = $form->get('picture')->getData();
             if ($pictureFile) {
                 $pictureFileName = $avatarUploader->upload($pictureFile);
+                $imageOptimizer->resize($this->getParameter("app.avatar_pictures_directory") . $pictureFileName);
                 // Remove previous picture from storage
                 if ($user->getPicture()) {
                     $avatarUploader->delete($user->getPicture());

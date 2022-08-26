@@ -14,6 +14,7 @@
                 <th>Created_at</th>
                 <th>Updated_at</th>
                 <th>actions</th>
+                <th>Likes</th>
             </tr>
         </thead>
         <tbody>
@@ -27,6 +28,17 @@
                 <td>
                     <a href="{{ path('app_post_show', {'id': post.id}) }}">show</a>
                     <a href="{{ path('app_post_edit', {'id': post.id}) }}">edit</a>
+                </td>
+                <td>
+                    {% if post.id not in userLikes %}
+                        <a href="{{ path('app_post_like', {id:post.id}) }}" class="btn btn-primary ">
+                            Like
+                        </a>
+                    {% else %}
+                        <a href="{{ path('app_post_unlike', {id:post.id}) }}" class="btn btn-primary ">
+                            Unlike
+                        </a>
+                    {% endif %}
                 </td>
             </tr>
         {% else %}

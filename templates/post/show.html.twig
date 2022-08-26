@@ -33,11 +33,17 @@
         </tr>
         <tr>
             <th>Like</th>
-            <td><a href="{{ path('app_post_like', {id:post.id}) }}" class="btn btn-primary ">
-                Like
-            </a><a href="{{ path('app_post_unlike', {id:post.id}) }}" class="btn btn-primary ">
+            <td>
+                {% if post.id not in userLikes %}
+                <a href="{{ path('app_post_like', {id:post.id}) }}" class="btn btn-primary ">
+                    Like
+                </a>
+                {% else %}
+                <a href="{{ path('app_post_unlike', {id:post.id}) }}" class="btn btn-primary ">
                     Unlike
-                </a></td>
+                </a>
+                {% endif %}
+            </td>
         </tr>
         </tbody>
     </table>

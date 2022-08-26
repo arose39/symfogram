@@ -3,6 +3,7 @@
 namespace App\Service;
 
 use App\Entity\Post;
+use App\Entity\User;
 use Predis\Client;
 use Symfony\Component\Security\Core\Security;
 
@@ -27,7 +28,7 @@ class Like
 
     public function getUserLikesIds(User $user): array
     {
-        $key = "user:" . $user->getId() . ":like";
+        $key = "user:" . $user->getId() . ":likes";
 
         return $this->redis->smembers($key);
     }
