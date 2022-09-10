@@ -85,6 +85,7 @@ class ProfileController extends AbstractController
                 }
                 $user->setPicture($pictureFileName);
             }
+            $user->setUpdatedAt(new \DateTimeImmutable('now'));
             $entityManager->persist($user);
             $entityManager->flush();
 
