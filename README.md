@@ -4,17 +4,12 @@
 но базовый функционал (загрузка фотом, подписки, лайки, 
 лента, сжатие фото,фикстуры) уже добавлен.
 
-Но пока без рефакторинга. Проэкт пока запускаю на опенсервере, докер компоуз доработаю позже.
 
-.env.example  should rename-> .env
-php bin/console doctrine:database:create
-php bin/console doctrine:migrations:migrate
-php bin/console doctrine:fixtures:load
-php bin/console doctrine:fixtures:load --append
-
-
-docker exec -it  symfogram-php-fpm-1 bash
-
-./bin/console doctrine:database:create
-./bin/console doctrine:migrations:migrate
-./bin/console doctrine:fixtures:load --append
+Для запуска проекта 
+ - .env.docker  переименуйте в .env
+ - Запустите в консоле комманду docker-compose up
+ - потом запустите 
+  - docker exec -it  symfogram-php-fpm-1 bash
+ - ./bin/console doctrine:database:create
+ - ./bin/console doctrine:migrations:migrate
+ - ./bin/console doctrine:fixtures:load --append
