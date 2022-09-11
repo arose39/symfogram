@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace App\Controller;
 
@@ -24,11 +24,9 @@ class PostController extends AbstractController
     #[Route('/', name: 'app_post_index', methods: ['GET'])]
     public function index(PostRepository $postRepository, Like $like): Response
     {
-        $userLikes = $like->getUserLikesIds($this->getUser());
-
         return $this->render('post/index.html.twig', [
             'posts' => $postRepository->findAll(),
-            'userLikes' => $userLikes,
+            'userLikes' => $like->getUserLikesIds($this->getUser()),
         ]);
     }
 
@@ -38,7 +36,6 @@ class PostController extends AbstractController
         $post = new Post();
         $form = $this->createForm(PostType::class, $post);
         $form->handleRequest($request);
-
         if ($form->isSubmitted() && $form->isValid()) {
             $pictureFile = $form->get('filename')->getData();
             if ($pictureFile) {
@@ -49,7 +46,7 @@ class PostController extends AbstractController
                 $post->setUpdatedAt(new \DateTimeImmutable('now'));
             }
             $postRepository->add($post, true);
-
+            // Add new post to all subscribers feed
             $postCreatedEvent = new PostCreatedEvent($this->getUser(), $post, $subscription->getUserFollowersIds($this->getUser()));
             $eventDispatcher->dispatch($postCreatedEvent, Events::POST_CREATED);
 
@@ -65,13 +62,10 @@ class PostController extends AbstractController
     #[Route('/{id}', name: 'app_post_show', methods: ['GET'])]
     public function show(Post $post, Like $like): Response
     {
-        $likesQuantity = $like->countPostLikes($post);
-        $userLikes = $like->getUserLikesIds($this->getUser());
-
         return $this->render('post/show.html.twig', [
             'post' => $post,
-            'likesQuantity' => $likesQuantity,
-            'userLikes' => $userLikes,
+            'likesQuantity' => $like->countPostLikes($post),
+            'userLikes' => $like->getUserLikesIds($this->getUser()),
         ]);
     }
 
@@ -80,9 +74,7 @@ class PostController extends AbstractController
     {
         $form = $this->createForm(PostType::class, $post);
         $form->handleRequest($request);
-
         if ($form->isSubmitted() && $form->isValid()) {
-
             $pictureFile = $form->get('filename')->getData();
             if ($pictureFile) {
                 $pictureFileName = $postPictureUploader->upload($pictureFile);
@@ -90,9 +82,8 @@ class PostController extends AbstractController
                 $post->setFilename($pictureFileName);
                 $post->setUpdatedAt(new \DateTimeImmutable('now'));
             }
-
             $postRepository->add($post, true);
-
+            //Update post in feed for all subscriber
             $postUpdatedEvent = new PostUpdatedEvent($post, $subscription->getUserFollowersIds($this->getUser()));
             $eventDispatcher->dispatch($postUpdatedEvent, Events::POST_UPDATED);
 
@@ -133,5 +124,4 @@ class PostController extends AbstractController
 
         return $this->redirect($referer);
     }
-
 }

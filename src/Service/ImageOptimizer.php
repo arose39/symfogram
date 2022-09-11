@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace App\Service;
 
@@ -29,7 +29,6 @@ class ImageOptimizer
         } else {
             $height = $width / $ratio;
         }
-
         $photo = $this->imagine->open($filename);
         $photo->resize(new Box($width, $height))->save($filename);
     }

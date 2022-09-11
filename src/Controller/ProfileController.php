@@ -2,8 +2,10 @@
 
 namespace App\Controller;
 
+use App\Entity\Post;
 use App\Entity\User;
 use App\Form\UserType;
+use App\Service\Like;
 use App\Service\Uploaders\AvatarPictureUploader;
 use App\Service\Subscription;
 use Doctrine\ORM\EntityManagerInterface;
@@ -31,8 +33,9 @@ class ProfileController extends AbstractController
 
 
     #[Route('/profile/{nickname}', name: 'profile')]
-    public function view(int|string $nickname, ManagerRegistry $doctrine, Subscription $subscription): Response
+    public function view(int|string $nickname, ManagerRegistry $doctrine, Subscription $subscription, Like $like): Response
     {
+        //Просматривать профили может только авторизированный пользователь
         $currentUser = $this->getUser();
         if (!$currentUser) {
             return $this->redirectToRoute('app_login');
@@ -40,17 +43,17 @@ class ProfileController extends AbstractController
 
         $user = $doctrine->getRepository(User::class)->findOneByNickname($nickname);
         $userSubscriptionsIds = $subscription->getUserSubscriptionsIds($user);
-        $userFollowersIds = $subscription->getUserFollowersIds($user);
         $userSubscriptions = $doctrine->getRepository(User::class)->findBy(['id' => $userSubscriptionsIds]);
+        $userFollowersIds = $subscription->getUserFollowersIds($user);
         $userFollowers = $doctrine->getRepository(User::class)->findBy(['id' => $userFollowersIds]);
-
         $numberUserFollowers = $subscription->countUserFollowers($user);
         $numberUserSubscriptions = $subscription->countUserSubscriptions($user);
         $mutualSubscriptionsIds = $subscription->getMutualSubscriptionsIds($user);
         $mutualSubscriptions = $doctrine->getRepository(User::class)->findBy(['id' => $mutualSubscriptionsIds]);
+        $userPosts = $doctrine->getRepository(Post::class)->findBy(['user' => $user]);
+        $userLikes = $like->getUserLikesIds($this->getUser());
 
         return $this->render('profile/view.html.twig', [
-            'controller_name' => 'ProfileController',
             'user' => $user,
             'userSubscriptions' => $userSubscriptions,
             'userFollowers' => $userFollowers,
@@ -58,12 +61,16 @@ class ProfileController extends AbstractController
             'numberUserSubscriptions' => $numberUserSubscriptions,
             'mutualSubscriptions' => $mutualSubscriptions,
             'currentUser' => $currentUser,
+            'userPosts' => $userPosts,
+            'userLikes' => $userLikes,
+            'like' => $like
         ]);
     }
 
     #[Route('/profile/{user}/edit', name: 'edit_profile')]
     public function edit(User $user, Request $request, EntityManagerInterface $entityManager, AvatarPictureUploader $avatarUploader): Response
     {
+        //Пользователь может редактировать только свой профил
         if ($this->getUser() !== $user) {
             return $this->redirectToRoute('profile', [
                 'nickname' => $user->getNickname()
@@ -76,7 +83,7 @@ class ProfileController extends AbstractController
             $pictureFile = $form->get('picture')->getData();
             if ($pictureFile) {
                 $pictureFileName = $avatarUploader->upload($pictureFile);
-//                 Remove previous picture from storage
+                // Remove previous picture from storage
                 if ($user->getPicture()) {
                     $avatarUploader->delete($user->getPicture());
                 }

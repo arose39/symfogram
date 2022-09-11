@@ -118,5 +118,53 @@
     </div>
 
 
+    <table class="table">
+        <thead>
+        <tr>
+            <th>Id</th>
+            <th>Filename</th>
+            <th>Description</th>
+            <th>Created_at</th>
+            <th>Updated_at</th>
+            <th>actions</th>
+            <th>Likes quantity</th>
+            <th>Likes</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for post in userPosts %}
+            <tr>
+                <td>{{ post.id }}</td>
+                <td><img src="{{ asset('uploads/post_pictures/' ~ post.filename) }}" alt="post picture" height="150"></td>
+                <td>{{ post.description }}</td>
+                <td>{{ post.createdAt ? post.createdAt|date('Y-m-d H:i:s') : '' }}</td>
+                <td>{{ post.updatedAt ? post.updatedAt|date('Y-m-d H:i:s') : '' }}</td>
+                <td>
+                    <a href="{{ path('app_post_show', {'id': post.id}) }}">show</a>
+                    <a href="{{ path('app_post_edit', {'id': post.id}) }}">edit</a>
+                    {{ include('post/_delete_form.html.twig') }}
+                </td>
+                <td>{{ like.countPostLikes(post) }}</td>
+                <td>
+                    {% if post.id not in userLikes %}
+                        <a href="{{ path('app_post_like', {id:post.id}) }}" class="btn btn-primary ">
+                            Like
+                        </a>
+                    {% else %}
+                        <a href="{{ path('app_post_unlike', {id:post.id}) }}" class="btn btn-primary ">
+                            Unlike
+                        </a>
+                    {% endif %}
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="6">no records found</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+
 
 {% endblock %}

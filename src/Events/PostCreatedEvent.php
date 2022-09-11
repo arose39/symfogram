@@ -1,10 +1,9 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace App\Events;
 
 use App\Entity\Post;
 use App\Entity\User;
-use phpDocumentor\Reflection\Types\Collection;
 use Symfony\Contracts\EventDispatcher\Event;
 
 class PostCreatedEvent extends Event

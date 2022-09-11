@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace App\Repository;
 
@@ -62,7 +62,6 @@ class FeedRepository extends ServiceEntityRepository
             ->setParameter('postId', $postId)
             ->setParameter('userId', $userId)
             ->getQuery()
-            ->getOneOrNullResult()
-        ;
+            ->getOneOrNullResult();
     }
 }

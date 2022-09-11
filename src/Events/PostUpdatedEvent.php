@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace App\Events;
 
@@ -9,10 +9,8 @@ use Symfony\Contracts\EventDispatcher\Event;
 
 class PostUpdatedEvent extends Event
 {
-    private User $user;
     private Post $post;
     private array $userFollowersIds;
-
 
     public function __construct( Post $post, array $userFollowersIds)
     {

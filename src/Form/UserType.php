@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace App\Form;
 
@@ -78,7 +78,7 @@ class UserType extends AbstractType
 //            ->add('roles')
 //            ->add('password')
 //            ->add('isVerified')
-//            ->add('about')
+            ->add('about')
 //            ->add('type')
             ->add('nickname')
 //            ->add('created_at')

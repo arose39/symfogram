@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace App\Service\Uploaders;
 
@@ -25,5 +25,12 @@ class AvatarPictureUploader extends BaseFileUploader
         $this->imageOptimizer->resize($this->getTargetDirectory() . $pictureFileName);
 
         return $pictureFileName;
+    }
+
+    public function delete(string $fileName): void
+    {
+        if ($fileName != 'default_avatar.png') {
+            parent::delete($fileName);
+        }
     }
 }

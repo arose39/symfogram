@@ -24,7 +24,6 @@ class Subscription
         $this->redis->srem("user:" . $user->getId() . ":followers", $this->security->getUser()->getId());
     }
 
-
     public function getUserSubscriptionsIds(User $user): array
     {
         $key = "user:" . $user->getId() . ":subscriptions";

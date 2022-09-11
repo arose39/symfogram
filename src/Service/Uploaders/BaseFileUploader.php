@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace App\Service\Uploaders;
 
@@ -35,7 +35,7 @@ class BaseFileUploader
         return $fileName;
     }
 
-    public function delete(string $fileName)
+    public function delete(string $fileName): void
     {
         $fileNameWithPath = $this->getTargetDirectory() . $fileName;
         if ($this->filesystem->exists($fileNameWithPath)) {

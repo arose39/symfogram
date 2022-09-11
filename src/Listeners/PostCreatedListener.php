@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace App\Listeners;
 
@@ -14,7 +14,7 @@ class PostCreatedListener
         $this->feedService = $feedService;
     }
 
-    public function onPostCreated(PostCreatedEvent $event)
+    public function onPostCreated(PostCreatedEvent $event): void
     {
         $this->feedService->addToFeeds($event);
     }

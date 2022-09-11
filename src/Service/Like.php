@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace App\Service;
 
@@ -43,6 +43,13 @@ class Like
     public function countPostLikes(Post $post): int
     {
         $key = "post:" . $post->getId() . ":likes";
+
+        return $this->redis->scard($key);
+    }
+
+    public function countPostLikesById(int $postId): int
+    {
+        $key = "post:" . $postId . ":likes";
 
         return $this->redis->scard($key);
     }

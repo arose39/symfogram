@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace App\DataFixtures;
 
@@ -36,12 +36,11 @@ class UserFixtures extends Fixture
             $user->setAbout($this->faker->realText($this->faker->numberBetween(50, 100)));
             $password = $this->hasher->hashPassword($user, '123123123');
             $user->setPassword($password);
-            $user->setPicture('default_img.jpeg');
+            $user->setPicture('default_avatar.png');
             $user->setCreatedAt(new \DateTimeImmutable('now'));
             $user->setUpdatedAt(new \DateTimeImmutable('now'));
             $manager->persist($user);
         }
-
         $manager->flush();
     }
 }

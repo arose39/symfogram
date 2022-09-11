@@ -1,8 +1,7 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace App\Listeners;
 
-use App\Events\PostCreatedEvent;
 use App\Events\PostUpdatedEvent;
 use App\Service\FeedService;
 
@@ -15,7 +14,7 @@ class PostUpdatedListener
         $this->feedService = $feedService;
     }
 
-    public function onPostUpdated(PostUpdatedEvent $event)
+    public function onPostUpdated(PostUpdatedEvent $event): void
     {
         $this->feedService->updateOnFeeds($event);
     }

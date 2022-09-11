@@ -4,7 +4,6 @@
 
 {% block body %}
     <h1>Post</h1>
-
     <table class="table">
         <tbody>
         <tr>
@@ -35,22 +34,19 @@
             <th>Like</th>
             <td>
                 {% if post.id not in userLikes %}
-                <a href="{{ path('app_post_like', {id:post.id}) }}" class="btn btn-primary ">
-                    Like
-                </a>
+                    <a href="{{ path('app_post_like', {id:post.id}) }}" class="btn btn-primary ">
+                        Like
+                    </a>
                 {% else %}
-                <a href="{{ path('app_post_unlike', {id:post.id}) }}" class="btn btn-primary ">
-                    Unlike
-                </a>
+                    <a href="{{ path('app_post_unlike', {id:post.id}) }}" class="btn btn-primary ">
+                        Unlike
+                    </a>
                 {% endif %}
             </td>
         </tr>
         </tbody>
     </table>
-
     <a href="{{ path('app_post_index') }}">back to list</a>
-
     <a href="{{ path('app_post_edit', {'id': post.id}) }}">edit</a>
-
     {{ include('post/_delete_form.html.twig') }}
 {% endblock %}

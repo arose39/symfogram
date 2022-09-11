@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace App\Service;
 
@@ -10,7 +10,6 @@ use Doctrine\ORM\EntityManagerInterface;
 
 class FeedService
 {
-
     private EntityManagerInterface $entityManager;
     private FeedRepository $feedRepository;
 
@@ -25,8 +24,6 @@ class FeedService
         $user = $event->getUser();
         $post = $event->getPost();
         $userFollowersIds = $event->getUserFollowersIds();
-
-
         foreach ($userFollowersIds as $followerId) {
             $feedItem = new Feed();
             $feedItem->setUserId($followerId);
@@ -43,11 +40,10 @@ class FeedService
         }
     }
 
-    public function updateOnFeeds(PostUpdatedEvent $event)
+    public function updateOnFeeds(PostUpdatedEvent $event): void
     {
         $post = $event->getPost();
         $userFollowersIds = $event->getUserFollowersIds();
-
         foreach ($userFollowersIds as $followerId) {
             $feedItem = $this->feedRepository->findOneByPostAndUserIds($post->getId(), $followerId);
             $feedItem->setPostFilename($post->getFilename());
