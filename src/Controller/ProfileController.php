@@ -63,7 +63,7 @@ class ProfileController extends AbstractController
     }
 
     #[Route('/profile/{user}/edit', name: 'edit_profile')]
-    public function edit(User $user, Request $request, EntityManagerInterface $entityManager, AvatarPictureUploader $avatarUploader, ImageOptimizer $imageOptimizer): Response
+    public function edit(User $user, Request $request, EntityManagerInterface $entityManager, AvatarPictureUploader $avatarUploader): Response
     {
         if ($this->getUser() !== $user) {
             return $this->redirectToRoute('profile', [
@@ -78,8 +78,7 @@ class ProfileController extends AbstractController
             $pictureFile = $form->get('picture')->getData();
             if ($pictureFile) {
                 $pictureFileName = $avatarUploader->upload($pictureFile);
-                $imageOptimizer->resize($this->getParameter("app.avatar_pictures_directory") . $pictureFileName);
-                // Remove previous picture from storage
+//                 Remove previous picture from storage
                 if ($user->getPicture()) {
                     $avatarUploader->delete($user->getPicture());
                 }

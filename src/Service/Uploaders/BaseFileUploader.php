@@ -2,7 +2,6 @@
 
 namespace App\Service\Uploaders;
 
-use App\Service\ImageOptimizer;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
@@ -13,7 +12,6 @@ class BaseFileUploader
     private string $targetDirectory;
     private SluggerInterface $slugger;
     private Filesystem $filesystem;
-    private ImageOptimizer $imageOptimizer;
 
     public function __construct($targetDirectory, SluggerInterface $slugger, Filesystem $filesystem)
     {
