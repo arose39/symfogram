@@ -54,13 +54,15 @@ class FeedRepository extends ServiceEntityRepository
 //        ;
 //    }
 
-//    public function findOneBySomeField($value): ?Feed
-//    {
-//        return $this->createQueryBuilder('f')
-//            ->andWhere('f.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->getQuery()
-//            ->getOneOrNullResult()
-//        ;
-//    }
+    public function findOneByPostAndUserIds($postId, $userId): ?Feed
+    {
+        return $this->createQueryBuilder('f')
+            ->andWhere('f.post_id = :postId')
+            ->andWhere('f.user_id = :userId')
+            ->setParameter('postId', $postId)
+            ->setParameter('userId', $userId)
+            ->getQuery()
+            ->getOneOrNullResult()
+        ;
+    }
 }

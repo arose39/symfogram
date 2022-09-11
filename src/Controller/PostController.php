@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\Post;
 use App\Events\Events;
 use App\Events\PostCreatedEvent;
+use App\Events\PostUpdatedEvent;
 use App\Form\PostType;
 use App\Repository\PostRepository;
 use App\Service\ImageOptimizer;
@@ -32,7 +33,7 @@ class PostController extends AbstractController
     }
 
     #[Route('/new', name: 'app_post_new', methods: ['GET', 'POST'])]
-    public function new(Request $request, PostRepository $postRepository, PostPictureUploader $postPictureUploader, ImageOptimizer $imageOptimizer, EventDispatcherInterface $eventDispatcher, Subscription $subscription): Response
+    public function new(Request $request, PostRepository $postRepository, PostPictureUploader $postPictureUploader, EventDispatcherInterface $eventDispatcher, Subscription $subscription): Response
     {
         $post = new Post();
         $form = $this->createForm(PostType::class, $post);
@@ -42,14 +43,12 @@ class PostController extends AbstractController
             $pictureFile = $form->get('filename')->getData();
             if ($pictureFile) {
                 $pictureFileName = $postPictureUploader->upload($pictureFile);
-                $imageOptimizer->resize($this->getParameter("app.post_pictures_directory") . $pictureFileName);
                 $post->setFilename($pictureFileName);
                 $post->setUser($this->getUser());
                 $post->setCreatedAt(new \DateTimeImmutable('now'));
                 $post->setUpdatedAt(new \DateTimeImmutable('now'));
             }
             $postRepository->add($post, true);
-
 
             $postCreatedEvent = new PostCreatedEvent($this->getUser(), $post, $subscription->getUserFollowersIds($this->getUser()));
             $eventDispatcher->dispatch($postCreatedEvent, Events::POST_CREATED);
@@ -77,7 +76,7 @@ class PostController extends AbstractController
     }
 
     #[Route('/{id}/edit', name: 'app_post_edit', methods: ['GET', 'POST'])]
-    public function edit(Request $request, Post $post, PostRepository $postRepository, PostPictureUploader $postPictureUploader, ImageOptimizer $imageOptimizer): Response
+    public function edit(Request $request, Post $post, PostRepository $postRepository, PostPictureUploader $postPictureUploader, EventDispatcherInterface $eventDispatcher, Subscription $subscription): Response
     {
         $form = $this->createForm(PostType::class, $post);
         $form->handleRequest($request);
@@ -87,13 +86,15 @@ class PostController extends AbstractController
             $pictureFile = $form->get('filename')->getData();
             if ($pictureFile) {
                 $pictureFileName = $postPictureUploader->upload($pictureFile);
-                $imageOptimizer->resize($this->getParameter("app.post_pictures_directory") . $pictureFileName);
                 $postPictureUploader->delete($post->getFilename());
                 $post->setFilename($pictureFileName);
                 $post->setUpdatedAt(new \DateTimeImmutable('now'));
             }
 
             $postRepository->add($post, true);
+
+            $postUpdatedEvent = new PostUpdatedEvent($post, $subscription->getUserFollowersIds($this->getUser()));
+            $eventDispatcher->dispatch($postUpdatedEvent, Events::POST_UPDATED);
 
             return $this->redirectToRoute('app_post_index', [], Response::HTTP_SEE_OTHER);
         }

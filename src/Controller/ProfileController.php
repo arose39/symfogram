@@ -1,10 +1,9 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace App\Controller;
 
 use App\Entity\User;
 use App\Form\UserType;
-use App\Service\ImageOptimizer;
 use App\Service\Uploaders\AvatarPictureUploader;
 use App\Service\Subscription;
 use Doctrine\ORM\EntityManagerInterface;
@@ -70,7 +69,6 @@ class ProfileController extends AbstractController
                 'nickname' => $user->getNickname()
             ]);
         }
-
         $form = $this->createForm(UserType::class, $user);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
@@ -106,7 +104,6 @@ class ProfileController extends AbstractController
                 'nickname' => $user->getNickname()
             ]);
         }
-
         $subscription->followUser($user);
 
         return $this->redirectToRoute('profile', [
