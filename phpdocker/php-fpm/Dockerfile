@@ -9,8 +9,26 @@ RUN apt-get update; \
 
 RUN apt-get update && \
     apt-get install -y libpq-dev && \
-    docker-php-ext-install pdo pdo_pgsql pgsql
+    docker-php-ext-install pgsql pdo pdo_pgsql
 
-#RUN  docker-php-ext-install xdebug \
-#     && docker-php-ext-enable xdebug \
+RUN pecl install xdebug
+RUN docker-php-ext-enable xdebug
 
+RUN apt-get install -y \
+    git \
+    zip \
+    curl \
+    sudo \
+    nano \
+    unzip \
+    libicu-dev \
+    libbz2-dev \
+    libpng-dev \
+    libjpeg-dev \
+    libmcrypt-dev \
+    libreadline-dev \
+    libfreetype6-dev \
+    g++
+
+RUN docker-php-ext-configure gd --with-freetype=/usr/include/ --with-jpeg=/usr/include/ \
+    && docker-php-ext-install gd

@@ -135,7 +135,7 @@
         {% for post in userPosts %}
             <tr>
                 <td>{{ post.id }}</td>
-                <td><img src="{{ asset('uploads/post_pictures/' ~ post.filename) }}" alt="post picture" height="150"></td>
+                <td><img src="{{ asset('/uploads/post_pictures/' ~ post.filename) }}" alt="post picture" height="150"></td>
                 <td>{{ post.description }}</td>
                 <td>{{ post.createdAt ? post.createdAt|date('Y-m-d H:i:s') : '' }}</td>
                 <td>{{ post.updatedAt ? post.updatedAt|date('Y-m-d H:i:s') : '' }}</td>

@@ -13,4 +13,8 @@ php bin/console doctrine:fixtures:load
 php bin/console doctrine:fixtures:load --append
 
 
+docker exec -it  symfogram-php-fpm-1 bash
 
+./bin/console doctrine:database:create
+./bin/console doctrine:migrations:migrate
+./bin/console doctrine:fixtures:load --append

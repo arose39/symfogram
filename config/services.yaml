@@ -27,8 +27,11 @@ services:
 
     Predis\Client:
         class: Predis\Client
+#        arguments:
+#            - { url: '%env(REDIS_URL)%' }
         arguments:
-            - { url: '%env(REDIS_URL)%' }
+            - host: '%env(REDIS_HOST)%'
+            - port: '%env(REDIS_PORT)%'
 
     App\Service\Uploaders\AvatarPictureUploader:
         arguments:
