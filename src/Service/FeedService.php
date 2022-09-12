@@ -26,7 +26,8 @@ class FeedService
         $userFollowersIds = $event->getUserFollowersIds();
         foreach ($userFollowersIds as $followerId) {
             $feedItem = new Feed();
-            $feedItem->setUserId($followerId);
+
+            $feedItem->setUserId((int) $followerId);
             $feedItem->setAuthorId($user->getId());
             $feedItem->setAuthorName($user->getFirstName() . " " . $user->getLastName());
             $feedItem->setAuthorNickname($user->getNickname());

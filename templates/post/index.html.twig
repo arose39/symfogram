@@ -12,6 +12,7 @@
             <th>Description</th>
             <th>Created_at</th>
             <th>Updated_at</th>
+            <th>Comments quantity</th>
             <th>actions</th>
             <th>Likes</th>
         </tr>
@@ -25,10 +26,15 @@
                 <td>{{ post.description }}</td>
                 <td>{{ post.createdAt ? post.createdAt|date('Y-m-d H:i:s') : '' }}</td>
                 <td>{{ post.updatedAt ? post.updatedAt|date('Y-m-d H:i:s') : '' }}</td>
+                <td><a href="{{ path('app_post_show', {'id': post.id}) }}">
+                         {{ post.commentsQuantity() }} comments
+                    </a>
+                </td>
                 <td>
                     <a href="{{ path('app_post_show', {'id': post.id}) }}">show</a>
                     <a href="{{ path('app_post_edit', {'id': post.id}) }}">edit</a>
                     {{ include('post/_delete_form.html.twig') }}
+                    <a href="{{ path('app_comment_new', {'post': post.id}) }}">Add comment</a>
                 </td>
                 <td>
                     {% if post.id not in userLikes %}

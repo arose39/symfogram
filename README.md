@@ -7,9 +7,12 @@
 
 Для запуска проекта 
  - .env.docker  переименуйте в .env
+- Запустите в консоле комманду composer update
  - Запустите в консоле комманду docker-compose up
  - потом запустите 
   - docker exec -it  symfogram-php-fpm-1 bash
+    
+И в интерактивном окне контейнера запустить команды:
  - ./bin/console doctrine:database:create
  - ./bin/console doctrine:migrations:migrate
  - ./bin/console doctrine:fixtures:load --append

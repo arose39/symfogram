@@ -128,7 +128,8 @@
             <th>Updated_at</th>
             <th>actions</th>
             <th>Likes quantity</th>
-            <th>Likes</th>
+            <th>Comments quantity</th>
+            <th>Like</th>
         </tr>
         </thead>
         <tbody>
@@ -145,6 +146,10 @@
                     {{ include('post/_delete_form.html.twig') }}
                 </td>
                 <td>{{ like.countPostLikes(post) }}</td>
+                <td><a href="{{ path('app_post_show', {'id': post.id}) }}">
+                        {{ post.commentsQuantity() }} comments
+                    </a>
+                </td>
                 <td>
                     {% if post.id not in userLikes %}
                         <a href="{{ path('app_post_like', {id:post.id}) }}" class="btn btn-primary ">

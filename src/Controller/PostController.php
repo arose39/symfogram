@@ -7,6 +7,7 @@ use App\Events\Events;
 use App\Events\PostCreatedEvent;
 use App\Events\PostUpdatedEvent;
 use App\Form\PostType;
+use App\Repository\CommentRepository;
 use App\Repository\PostRepository;
 use App\Service\ImageOptimizer;
 use App\Service\Like;
@@ -60,12 +61,13 @@ class PostController extends AbstractController
     }
 
     #[Route('/{id}', name: 'app_post_show', methods: ['GET'])]
-    public function show(Post $post, Like $like): Response
+    public function show(Post $post, Like $like, CommentRepository $commentRepository): Response
     {
         return $this->render('post/show.html.twig', [
             'post' => $post,
             'likesQuantity' => $like->countPostLikes($post),
             'userLikes' => $like->getUserLikesIds($this->getUser()),
+            'comments' => $commentRepository->findBy(['post' => $post]),
         ]);
     }
 

@@ -16,6 +16,7 @@
             <th>Created_at</th>
             <th>actions</th>
             <th>Likes quantity</th>
+            <th>Comments quantity</th>
             <th>Likes</th>
         </tr>
         </thead>
@@ -36,6 +37,10 @@
                     <a href="{{ path('app_post_edit', {'id': post.postId}) }}">edit</a>
                 </td>
                 <td>{{ like.countPostLikesById(post.postId) }}</td>
+                <td><a href="{{ path('app_post_show', {'id': post.postId}) }}">
+                        {{ commentsCounter.count(post.postId) }} comments
+                    </a>
+                </td>
                 <td>
                     {% if post.postId not in userLikes %}
                         <a href="{{ path('app_post_like', {id:post.postId}) }}" class="btn btn-primary ">
