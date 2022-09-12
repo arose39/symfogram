@@ -16,3 +16,11 @@
  - ./bin/console doctrine:database:create
  - ./bin/console doctrine:migrations:migrate
  - ./bin/console doctrine:fixtures:load --append
+
+На даный момент в проекте можно:
+ - лайкать посты
+ - подписываться и отписываться
+ - смотреть общих друзей
+ - добавлять посты 
+ - в ленту новостей выводяться новые посты из ваших подписок
+ - редактировать профиль
