@@ -14,14 +14,6 @@ use Symfony\Component\Routing\Annotation\Route;
 #[Route('/comment')]
 class CommentController extends AbstractController
 {
-    #[Route('/', name: 'app_comment_index', methods: ['GET'])]
-    public function index(CommentRepository $commentRepository): Response
-    {
-        return $this->render('comment/index.html.twig', [
-            'comments' => $commentRepository->findAll(),
-        ]);
-    }
-
     #[Route('/new/{post}', name: 'app_comment_new', methods: ['GET', 'POST'])]
     public function new(Request $request, CommentRepository $commentRepository, Post $post): Response
     {
@@ -42,14 +34,6 @@ class CommentController extends AbstractController
         return $this->renderForm('comment/new.html.twig', [
             'comment' => $comment,
             'form' => $form,
-        ]);
-    }
-
-    #[Route('/{id}', name: 'app_comment_show', methods: ['GET'])]
-    public function show(Comment $comment): Response
-    {
-        return $this->render('comment/show.html.twig', [
-            'comment' => $comment,
         ]);
     }
 
@@ -78,8 +62,8 @@ class CommentController extends AbstractController
     #[Route('/{id}', name: 'app_comment_delete', methods: ['POST'])]
     public function delete(Request $request, Comment $comment, CommentRepository $commentRepository): Response
     {
-        //Пользователь может удалять только свой комментарий
-        if ($this->getUser() !== $comment->getAuthor()) {
+        //Пользователь может удалять только свой комментарий или комментарии под своим постом
+        if ($this->getUser() !== $comment->getAuthor() && $this->getUser() !== $comment->getPost()->getUser()) {
             return $this->redirect($request->headers->get('referer'));
         }
         if ($this->isCsrfTokenValid('delete' . $comment->getId(), $request->request->get('_token'))) {

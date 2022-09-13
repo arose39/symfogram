@@ -29,6 +29,7 @@ class PostController extends AbstractController
         return $this->render('post/index.html.twig', [
             'posts' => $postRepository->findAll(),
             'userLikes' => $like->getUserLikesIds($this->getUser()),
+            'currentUser' => $this->getUser(),
         ]);
     }
 
@@ -69,6 +70,7 @@ class PostController extends AbstractController
             'likesQuantity' => $like->countPostLikes($post),
             'userLikes' => $like->getUserLikesIds($this->getUser()),
             'comments' => $commentRepository->findBy(['post' => $post]),
+            'currentUser' => $this->getUser(),
         ]);
     }
 

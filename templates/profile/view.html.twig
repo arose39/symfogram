@@ -142,8 +142,10 @@
                 <td>{{ post.updatedAt ? post.updatedAt|date('Y-m-d H:i:s') : '' }}</td>
                 <td>
                     <a href="{{ path('app_post_show', {'id': post.id}) }}">show</a>
+                    {% if(currentUser is same as (user)) %}
                     <a href="{{ path('app_post_edit', {'id': post.id}) }}">edit</a>
                     {{ include('post/_delete_form.html.twig') }}
+                    {% endif %}
                 </td>
                 <td>{{ like.countPostLikes(post) }}</td>
                 <td><a href="{{ path('app_post_show', {'id': post.id}) }}">

@@ -32,8 +32,10 @@
                 </td>
                 <td>
                     <a href="{{ path('app_post_show', {'id': post.id}) }}">show</a>
+                    {% if post.user is same as currentUser %}
                     <a href="{{ path('app_post_edit', {'id': post.id}) }}">edit</a>
                     {{ include('post/_delete_form.html.twig') }}
+                    {% endif %}
                     <a href="{{ path('app_comment_new', {'post': post.id}) }}">Add comment</a>
                 </td>
                 <td>
