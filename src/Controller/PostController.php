@@ -75,6 +75,11 @@ class PostController extends AbstractController
     #[Route('/{id}/edit', name: 'app_post_edit', methods: ['GET', 'POST'])]
     public function edit(Request $request, Post $post, PostRepository $postRepository, PostPictureUploader $postPictureUploader, EventDispatcherInterface $eventDispatcher, Subscription $subscription): Response
     {
+        //Пользователь может редактировать только свой пост
+        if ($this->getUser() !== $post->getUser()) {
+            return $this->redirect($request->headers->get('referer'));
+        }
+
         $form = $this->createForm(PostType::class, $post);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
@@ -102,6 +107,10 @@ class PostController extends AbstractController
     #[Route('/{id}', name: 'app_post_delete', methods: ['POST'])]
     public function delete(Request $request, Post $post, PostRepository $postRepository, PostPictureUploader $postPictureUploader, EventDispatcherInterface $eventDispatcher): Response
     {
+        //Пользователь может удалять только свой пост
+        if ($this->getUser() !== $post->getUser()) {
+            return $this->redirect($request->headers->get('referer'));
+        }
         if ($this->isCsrfTokenValid('delete' . $post->getId(), $request->request->get('_token'))) {
             $postPictureUploader->delete($post->getFilename());
 
@@ -110,7 +119,6 @@ class PostController extends AbstractController
             $eventDispatcher->dispatch($postDeletedEvent, Events::POST_DELETED);
             $postRepository->remove($post, true);
         }
-
 
         return $this->redirectToRoute('app_post_index', [], Response::HTTP_SEE_OTHER);
     }
@@ -121,15 +129,14 @@ class PostController extends AbstractController
         $like->likePost($post);
         $referer = $request->headers->get('referer');
 
-        return $this->redirect($referer);;
+        return $this->redirect($referer);
     }
 
     #[Route('/unlike/{id}', name: 'app_post_unlike', methods: ['GET'])]
     public function unlike(Post $post, Like $like, Request $request): Response
     {
         $like->unlikePost($post);
-        $referer = $request->headers->get('referer');
 
-        return $this->redirect($referer);
+        return $this->redirect($request->headers->get('referer'));
     }
 }

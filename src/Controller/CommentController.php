@@ -56,6 +56,10 @@ class CommentController extends AbstractController
     #[Route('/{id}/edit', name: 'app_comment_edit', methods: ['GET', 'POST'])]
     public function edit(Request $request, Comment $comment, CommentRepository $commentRepository): Response
     {
+        //Пользователь может редактировать только свой комментарий
+        if ($this->getUser() !== $comment->getAuthor()) {
+            return $this->redirect($request->headers->get('referer'));
+        }
         $form = $this->createForm(CommentType::class, $comment);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
@@ -74,10 +78,14 @@ class CommentController extends AbstractController
     #[Route('/{id}', name: 'app_comment_delete', methods: ['POST'])]
     public function delete(Request $request, Comment $comment, CommentRepository $commentRepository): Response
     {
+        //Пользователь может удалять только свой комментарий
+        if ($this->getUser() !== $comment->getAuthor()) {
+            return $this->redirect($request->headers->get('referer'));
+        }
         if ($this->isCsrfTokenValid('delete' . $comment->getId(), $request->request->get('_token'))) {
             $commentRepository->remove($comment, true);
         }
 
-        return $this->redirectToRoute('app_comment_index', [], Response::HTTP_SEE_OTHER);
+        return $this->redirect($request->headers->get('referer'));
     }
 }
