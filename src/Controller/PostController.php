@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\Post;
 use App\Events\Events;
 use App\Events\PostCreatedEvent;
+use App\Events\PostDeletedEvent;
 use App\Events\PostUpdatedEvent;
 use App\Form\PostType;
 use App\Repository\CommentRepository;
@@ -99,12 +100,17 @@ class PostController extends AbstractController
     }
 
     #[Route('/{id}', name: 'app_post_delete', methods: ['POST'])]
-    public function delete(Request $request, Post $post, PostRepository $postRepository, PostPictureUploader $postPictureUploader): Response
+    public function delete(Request $request, Post $post, PostRepository $postRepository, PostPictureUploader $postPictureUploader, EventDispatcherInterface $eventDispatcher): Response
     {
         if ($this->isCsrfTokenValid('delete' . $post->getId(), $request->request->get('_token'))) {
             $postPictureUploader->delete($post->getFilename());
+
+            //Delete post from feed for all subscriber
+            $postDeletedEvent = new PostDeletedEvent($post);
+            $eventDispatcher->dispatch($postDeletedEvent, Events::POST_DELETED);
             $postRepository->remove($post, true);
         }
+
 
         return $this->redirectToRoute('app_post_index', [], Response::HTTP_SEE_OTHER);
     }

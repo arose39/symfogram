@@ -64,4 +64,14 @@ class FeedRepository extends ServiceEntityRepository
             ->getQuery()
             ->getOneOrNullResult();
     }
+
+    public function deleteFeedItemsByPostId($postId): void
+    {
+        $this->createQueryBuilder('f')
+            ->delete()
+            ->andWhere('f.post_id = :postId')
+            ->setParameter('postId', $postId)
+            ->getQuery()
+            ->execute();
+    }
 }

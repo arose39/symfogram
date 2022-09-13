@@ -49,6 +49,10 @@ services:
         tags:
             - { name: kernel.event_listener, event: post.updated }
 
+    App\Listeners\PostDeletedListener:
+        tags:
+            - { name: kernel.event_listener, event: post.deleted }
+
     App\Service\Subscription:
         arguments:
             $redis: '@Predis\Client'

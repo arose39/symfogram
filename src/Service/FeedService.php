@@ -4,6 +4,7 @@ namespace App\Service;
 
 use App\Entity\Feed;
 use App\Events\PostCreatedEvent;
+use App\Events\PostDeletedEvent;
 use App\Events\PostUpdatedEvent;
 use App\Repository\FeedRepository;
 use Doctrine\ORM\EntityManagerInterface;
@@ -52,5 +53,11 @@ class FeedService
             $this->entityManager->persist($feedItem);
             $this->entityManager->flush();
         }
+    }
+
+    public function deleteFromFeeds(PostDeletedEvent $event): void
+    {
+        $post = $event->getPost();
+        $this->feedRepository->deleteFeedItemsByPostId($post->getId());
     }
 }
