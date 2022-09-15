@@ -1,6 +1,6 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Hello FeedController!{% endblock %}
+{% block title %}Feed{% endblock %}
 
 {% block body %}
     <h1>Feed</h1>
@@ -10,10 +10,11 @@
             <th>Author nickname</th>
             <th>Author name</th>
             <th>Author picture</th>
-            <th>Id</th>
+            <th>Post Id</th>
             <th>Filename</th>
             <th>Description</th>
             <th>Created_at</th>
+            <th>Updated_at</th>
             <th>actions</th>
             <th>Likes quantity</th>
             <th>Comments quantity</th>
@@ -23,31 +24,32 @@
         <tbody>
         {% for post in feedPosts %}
             <tr>
-                <td>{{ post.authorNickname }}</td>
-                <td>{{ post.authorName }}</td>
-                <td><img src="{{ asset('uploads/avatar_pictures/' ~ post.authorPicture) }}" alt="post picture"
-                         height="15"></td>
+                <td>{{ post.user.nickname }}</td>
+                <td>{{ post.user.fullName }}</td>
+                <td><img src="{{ asset('uploads/avatar_pictures/' ~ post.user.picture) }}" alt="post picture"
+                         height="30"></td>
                 <td>{{ post.id }}</td>
-                <td><img src="{{ asset('uploads/post_pictures/' ~ post.postFilename) }}" alt="post picture"
+                <td><img src="{{ asset('uploads/post_pictures/' ~ post.filename) }}" alt="post picture"
                          height="150"></td>
-                <td>{{ post.postDescription }}</td>
-                <td>{{ post.postCreatedAt ? post.postCreatedAt|date('Y-m-d H:i:s') : '' }}</td>
+                <td>{{ post.description }}</td>
+                <td>{{ post.createdAt ? post.createdAt|date('Y-m-d H:i:s') : '' }}</td>
+                <td>{{ post.updatedAt ? post.updatedAt|date('Y-m-d H:i:s') : '' }}</td>
                 <td>
-                    <a href="{{ path('app_post_show', {'id': post.postId}) }}">show</a>
-                    <a href="{{ path('app_post_edit', {'id': post.postId}) }}">edit</a>
+                    <a href="{{ path('app_post_show', {'id': post.id}) }}">show</a>
+                    <a href="{{ path('app_post_edit', {'id': post.id}) }}">edit</a>
                 </td>
-                <td>{{ like.countPostLikesById(post.postId) }}</td>
-                <td><a href="{{ path('app_post_show', {'id': post.postId}) }}">
-                        {{ commentsCounter.count(post.postId) }} comments
+                <td>{{ like.countPostLikes(post) }}</td>
+                <td><a href="{{ path('app_post_show', {'id': post.id}) }}">
+                        {{ post.commentsQuantity }} comments
                     </a>
                 </td>
                 <td>
-                    {% if post.postId not in userLikes %}
-                        <a href="{{ path('app_post_like', {id:post.postId}) }}" class="btn btn-primary ">
+                    {% if post.id not in userLikes %}
+                        <a href="{{ path('app_post_like', {id:post.id}) }}" class="btn btn-primary ">
                             Like
                         </a>
                     {% else %}
-                        <a href="{{ path('app_post_unlike', {id:post.postId}) }}" class="btn btn-primary ">
+                        <a href="{{ path('app_post_unlike', {id:post.id}) }}" class="btn btn-primary ">
                             Unlike
                         </a>
                     {% endif %}

@@ -50,7 +50,7 @@ class ProfileController extends AbstractController
         $numberUserSubscriptions = $subscription->countUserSubscriptions($user);
         $mutualSubscriptionsIds = $subscription->getMutualSubscriptionsIds($user);
         $mutualSubscriptions = $doctrine->getRepository(User::class)->findBy(['id' => $mutualSubscriptionsIds]);
-        $userPosts = $doctrine->getRepository(Post::class)->findBy(['user' => $user]);
+        $userPosts = $doctrine->getRepository(Post::class)->findBy(['user' => $user], ['created_at'=>"DESC"]);
         $userLikes = $like->getUserLikesIds($this->getUser());
 
         return $this->render('profile/view.html.twig', [

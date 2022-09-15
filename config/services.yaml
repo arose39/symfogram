@@ -41,18 +41,6 @@ services:
         arguments:
             $targetDirectory: '%app.post_pictures_directory%'
 
-    App\Listeners\PostCreatedListener:
-        tags:
-            - { name: kernel.event_listener, event: post.created}
-
-    App\Listeners\PostUpdatedListener:
-        tags:
-            - { name: kernel.event_listener, event: post.updated }
-
-    App\Listeners\PostDeletedListener:
-        tags:
-            - { name: kernel.event_listener, event: post.deleted }
-
     App\Service\Subscription:
         arguments:
             $redis: '@Predis\Client'

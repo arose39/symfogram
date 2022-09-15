@@ -27,14 +27,14 @@ class PostController extends AbstractController
     public function index(PostRepository $postRepository, Like $like): Response
     {
         return $this->render('post/index.html.twig', [
-            'posts' => $postRepository->findAll(),
+            'posts' => $postRepository->findBy([], ['created_at'=>"DESC"]),
             'userLikes' => $like->getUserLikesIds($this->getUser()),
             'currentUser' => $this->getUser(),
         ]);
     }
 
     #[Route('/new', name: 'app_post_new', methods: ['GET', 'POST'])]
-    public function new(Request $request, PostRepository $postRepository, PostPictureUploader $postPictureUploader, EventDispatcherInterface $eventDispatcher, Subscription $subscription): Response
+    public function new(Request $request, PostRepository $postRepository, PostPictureUploader $postPictureUploader): Response
     {
         $post = new Post();
         $form = $this->createForm(PostType::class, $post);
@@ -49,9 +49,6 @@ class PostController extends AbstractController
                 $post->setUpdatedAt(new \DateTimeImmutable('now'));
             }
             $postRepository->add($post, true);
-            // Add new post to all subscribers feed
-            $postCreatedEvent = new PostCreatedEvent($this->getUser(), $post, $subscription->getUserFollowersIds($this->getUser()));
-            $eventDispatcher->dispatch($postCreatedEvent, Events::POST_CREATED);
 
             return $this->redirectToRoute('app_post_index', [], Response::HTTP_SEE_OTHER);
         }
@@ -75,7 +72,7 @@ class PostController extends AbstractController
     }
 
     #[Route('/{id}/edit', name: 'app_post_edit', methods: ['GET', 'POST'])]
-    public function edit(Request $request, Post $post, PostRepository $postRepository, PostPictureUploader $postPictureUploader, EventDispatcherInterface $eventDispatcher, Subscription $subscription): Response
+    public function edit(Request $request, Post $post, PostRepository $postRepository, PostPictureUploader $postPictureUploader): Response
     {
         //Пользователь может редактировать только свой пост
         if ($this->getUser() !== $post->getUser()) {
@@ -93,9 +90,6 @@ class PostController extends AbstractController
                 $post->setUpdatedAt(new \DateTimeImmutable('now'));
             }
             $postRepository->add($post, true);
-            //Update post in feed for all subscriber
-            $postUpdatedEvent = new PostUpdatedEvent($post, $subscription->getUserFollowersIds($this->getUser()));
-            $eventDispatcher->dispatch($postUpdatedEvent, Events::POST_UPDATED);
 
             return $this->redirectToRoute('app_post_index', [], Response::HTTP_SEE_OTHER);
         }
@@ -107,7 +101,7 @@ class PostController extends AbstractController
     }
 
     #[Route('/{id}', name: 'app_post_delete', methods: ['POST'])]
-    public function delete(Request $request, Post $post, PostRepository $postRepository, PostPictureUploader $postPictureUploader, EventDispatcherInterface $eventDispatcher): Response
+    public function delete(Request $request, Post $post, PostRepository $postRepository, PostPictureUploader $postPictureUploader): Response
     {
         //Пользователь может удалять только свой пост
         if ($this->getUser() !== $post->getUser()) {
@@ -115,10 +109,6 @@ class PostController extends AbstractController
         }
         if ($this->isCsrfTokenValid('delete' . $post->getId(), $request->request->get('_token'))) {
             $postPictureUploader->delete($post->getFilename());
-
-            //Delete post from feed for all subscriber
-            $postDeletedEvent = new PostDeletedEvent($post);
-            $eventDispatcher->dispatch($postDeletedEvent, Events::POST_DELETED);
             $postRepository->remove($post, true);
         }
 

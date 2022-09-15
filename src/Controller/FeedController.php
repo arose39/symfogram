@@ -3,8 +3,10 @@
 namespace App\Controller;
 
 use App\Repository\FeedRepository;
+use App\Repository\PostRepository;
 use App\Service\Like;
 use App\Service\PostCommentsCounter;
+use App\Service\Subscription;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -12,16 +14,19 @@ use Symfony\Component\Routing\Annotation\Route;
 class FeedController extends AbstractController
 {
     #[Route('/feed', name: 'app_feed')]
-    public function index(FeedRepository $feedRepository, Like $like, PostCommentsCounter $commentsCounter): Response
+    public function index( Like $like, PostRepository $postRepository, Subscription $subscription ): Response
     {
-        $userLikes = $like->getUserLikesIds($this->getUser());
-        $feedPosts = $feedRepository->findBy(['user_id' => $this->getUser()]);
+        $currentUser = $this->getUser();
+        $userLikes = $like->getUserLikesIds($currentUser);
+        $userSubscriptions = $subscription->getUserSubscriptionsIds($currentUser);
+        //Пользователь в ленте видит так же и свои посты
+        $userSubscriptions[] = $currentUser->getId();
+        $feedPosts = $postRepository->findBy(['user' => $userSubscriptions], ['created_at'=>"DESC"]);
 
         return $this->render('feed/index.html.twig', [
             'feedPosts' => $feedPosts,
             'userLikes' => $userLikes,
             'like' => $like,
-            'commentsCounter' => $commentsCounter,
         ]);
     }
 }
