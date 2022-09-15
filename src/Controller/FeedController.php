@@ -2,7 +2,6 @@
 
 namespace App\Controller;
 
-use App\Repository\FeedRepository;
 use App\Repository\PostRepository;
 use App\Service\Like;
 use App\Service\PostCommentsCounter;

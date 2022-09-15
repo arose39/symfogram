@@ -3,19 +3,12 @@
 namespace App\Controller;
 
 use App\Entity\Post;
-use App\Events\Events;
-use App\Events\PostCreatedEvent;
-use App\Events\PostDeletedEvent;
-use App\Events\PostUpdatedEvent;
 use App\Form\PostType;
 use App\Repository\CommentRepository;
 use App\Repository\PostRepository;
-use App\Service\ImageOptimizer;
 use App\Service\Like;
-use App\Service\Subscription;
 use App\Service\Uploaders\PostPictureUploader;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;

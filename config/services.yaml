@@ -27,8 +27,6 @@ services:
 
     Predis\Client:
         class: Predis\Client
-#        arguments:
-#            - { url: '%env(REDIS_URL)%' }
         arguments:
             - host: '%env(REDIS_HOST)%'
             - port: '%env(REDIS_PORT)%'
