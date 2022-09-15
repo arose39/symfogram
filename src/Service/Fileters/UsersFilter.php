@@ -15,18 +15,39 @@ class UsersFilter
         $this->builder = $this->userRepository->createQueryBuilder('user');
     }
 
-    public function firstName(string $searchString = ''): QueryBuilder
+    public function firstName(?string $searchString = null): QueryBuilder
     {
-        return $this->builder
-            ->andWhere("user.first_name LIKE :firstName")
-            ->setParameter("firstName", '%' . $searchString . '%');
+        if ($searchString != null) {
+            $searchString = ucfirst(strtolower($searchString));
+            return $this->builder
+                ->andWhere("user.first_name LIKE :firstName")
+                ->setParameter("firstName", '%' . $searchString . '%');
+        }
+
+        return $this->builder;
     }
 
-    public function lastName(string $searchString = ''): QueryBuilder
+    public function lastName(?string $searchString = null): QueryBuilder
     {
-        return $this->builder
-            ->andWhere("user.last_name LIKE :lastName")
-            ->setParameter("lastName", '%' . $searchString . '%');
+        if ($searchString != null) {
+            $searchString = ucfirst(strtolower($searchString));
+            return $this->builder
+                ->andWhere("user.last_name LIKE :lastName")
+                ->setParameter("lastName", '%' . $searchString . '%');
+        }
+
+        return $this->builder;
+    }
+
+    public function nickname(?string $searchString = null): QueryBuilder
+    {
+        if ($searchString != null) {
+            return $this->builder
+                ->andWhere("user.nickname LIKE :nickname")
+                ->setParameter("nickname", '%' . $searchString . '%');
+        }
+
+        return $this->builder;
     }
 
     public function getFilteredBuilder(): QueryBuilder

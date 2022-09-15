@@ -16,6 +16,11 @@
             <input name="lastName" type="text" class="form-control" id="lastName"
                    value="{{ request.query.get('lastName') }}" placeholder="Type last name">
         </div>
+        <div class="mb-3">
+            <label for="nickname" class="form-label">last name</label>
+            <input name="nickname" type="text" class="form-control" id="nickname"
+                   value="{{ request.query.get('nickname') }}" placeholder="Type last name">
+        </div>
         <button type="submit" value="search" class="btn btn-primary">Search</button>
     </form>
 

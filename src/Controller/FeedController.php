@@ -16,6 +16,9 @@ class FeedController extends AbstractController
     public function index( Like $like, PostRepository $postRepository, Subscription $subscription ): Response
     {
         $currentUser = $this->getUser();
+        if (!$currentUser) {
+            return $this->redirectToRoute('app_login');
+        }
         $userLikes = $like->getUserLikesIds($currentUser);
         $userSubscriptions = $subscription->getUserSubscriptionsIds($currentUser);
         //Пользователь в ленте видит так же и свои посты

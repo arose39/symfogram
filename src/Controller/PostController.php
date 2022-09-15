@@ -19,10 +19,15 @@ class PostController extends AbstractController
     #[Route('/', name: 'app_post_index', methods: ['GET'])]
     public function index(PostRepository $postRepository, Like $like): Response
     {
+        $currentUser = $this->getUser();
+        if (!$currentUser) {
+            return $this->redirectToRoute('app_login');
+        }
+
         return $this->render('post/index.html.twig', [
             'posts' => $postRepository->findBy([], ['created_at'=>"DESC"]),
-            'userLikes' => $like->getUserLikesIds($this->getUser()),
-            'currentUser' => $this->getUser(),
+            'userLikes' => $like->getUserLikesIds($currentUser),
+            'currentUser' => $currentUser,
         ]);
     }
 

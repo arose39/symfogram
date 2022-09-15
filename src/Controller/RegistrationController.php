@@ -46,6 +46,8 @@ class RegistrationController extends AbstractController
                     $form->get('plainPassword')->getData()
                 )
             );
+            $user->setFirstName(ucfirst(strtolower($form->get('firstName')->getData())));
+            $user->setLastName(ucfirst(strtolower($form->get('lastName')->getData())));
             $user->setCreatedAt(new \DateTimeImmutable('now'));
             $user->setUpdatedAt(new \DateTimeImmutable('now'));
 
