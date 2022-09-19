@@ -50,6 +50,9 @@ class RegistrationController extends AbstractController
             $user->setLastName(ucfirst(strtolower($form->get('lastName')->getData())));
             $user->setCreatedAt(new \DateTimeImmutable('now'));
             $user->setUpdatedAt(new \DateTimeImmutable('now'));
+            $user->setPicture('default_avatar.png');
+            $user->setType(1);
+            $user->setRoles(['ROLE_USER']);
 
             $entityManager->persist($user);
             $entityManager->flush();

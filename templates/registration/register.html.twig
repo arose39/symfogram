@@ -7,16 +7,27 @@
         <div class="alert alert-danger" role="alert">{{ flash_error }}</div>
     {% endfor %}
     <div class="container">
-    <h1>Register</h1>
-    {{ form_start(registrationForm) }}
-    {{ form_row(registrationForm.firstName) }}
-    {{ form_row(registrationForm.lastName) }}
-    {{ form_row(registrationForm.email) }}
-    {{ form_row(registrationForm.plainPassword, {
-        label: 'Password'
-    }) }}
-    {{ form_row(registrationForm.agreeTerms) }}
-    <button type="submit" class="btn btn-success">Register</button>
-    {{ form_end(registrationForm) }}
-</div>
+        <h1>Register</h1>
+        {{ form_start(registrationForm) }}
+        {{ form_row(registrationForm.firstName) }}
+        {{ form_row(registrationForm.lastName) }}
+        {{ form_row(registrationForm.email) }}
+        {{ form_row(registrationForm.plainPassword, {
+            label: 'Password'
+        }) }}
+        {{ form_row(registrationForm.agreeTerms) }}
+        <button type="submit" class="btn btn-success">Register</button>
+        {{ form_end(registrationForm) }}
+    </div>
+    <br>
+    <a href="{{ path('connect_google_start') }}">
+        <button class="btn btn-lg btn-secondary">
+            Register via Google
+        </button>
+    </a>
+    <a href="{{ path('connect_github_start') }}">
+        <button class="btn btn-lg btn-secondary">
+            Register via Github
+        </button>
+    </a>
 {% endblock %}
