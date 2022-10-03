@@ -24,39 +24,59 @@ class Subscription
         $this->redis->srem("user:" . $user->getId() . ":followers", $this->security->getUser()->getId());
     }
 
-    public function getUserSubscriptionsIds(User $user): array
+    public function getUserSubscriptionsIds(?User $user): array
     {
-        $key = "user:" . $user->getId() . ":subscriptions";
+        if ($user) {
+            $key = "user:" . $user->getId() . ":subscriptions";
 
-        return $this->redis->smembers($key);
+            return $this->redis->smembers($key);
+        }
+
+        return [];
     }
 
-    public function getUserFollowersIds(User $user): array
+    public function getUserFollowersIds(?User $user): array
     {
-        $key = "user:" . $user->getId() . ":followers";
+        if ($user) {
+            $key = "user:" . $user->getId() . ":followers";
 
-        return $this->redis->smembers($key);
+            return $this->redis->smembers($key);
+        }
+
+        return [];
     }
 
-    public function countUserSubscriptions(User $user): int
+    public function countUserSubscriptions(?User $user): int
     {
-        $key = "user:" . $user->getId() . ":subscriptions";
+        if ($user) {
+            $key = "user:" . $user->getId() . ":subscriptions";
 
-        return $this->redis->scard($key);
+            return $this->redis->scard($key);
+        }
+
+        return 0;
     }
 
-    public function countUserFollowers(User $user): int
+    public function countUserFollowers(?User $user): int
     {
-        $key = "user:" . $user->getId() . ":followers";
+        if ($user) {
+            $key = "user:" . $user->getId() . ":followers";
 
-        return $this->redis->scard($key);
+            return $this->redis->scard($key);
+        }
+
+        return 0;
     }
 
-    public function getMutualSubscriptionsIds(User $user): array
+    public function getMutualSubscriptionsIds(?User $user): array
     {
+        if ($user) {
         $key1 = "user:" . $this->security->getUser()->getId() . ":subscriptions";
         $key2 = "user:" . $user->getId() . ":followers";
 
         return $this->redis->sinter([$key1, $key2]);
+        }
+
+        return [];
     }
 }

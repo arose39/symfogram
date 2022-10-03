@@ -11,7 +11,8 @@
  - Запустите в консоле комманду docker-compose up
  - потом запустите 
   - docker exec -it  symfogram-php-fpm-1 bash
-    
+   -  chmod +x bin/console    
+
 И в интерактивном окне контейнера запустить команды:
  - ./bin/console doctrine:database:create
  - ./bin/console doctrine:migrations:migrate
